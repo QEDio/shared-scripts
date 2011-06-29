@@ -1,0 +1,52 @@
+#!/bin/bash
+#
+# init script for autossh
+# sample usage: 
+# ./autossh start 0 tunnel floatera.qed.io -L3307:localhost:3306 keyfile
+
+# ==================
+# = Configurations =
+# ==================
+
+# Print commands and their arguments as they are executed.
+# use only for development
+# set -x
+
+# =============
+# = Variables =
+# =============
+
+CMD=$1
+NUMBER=$2
+USER=$3
+HOST=$4
+FORWARDING=$5
+KEYFILE=$6
+AUTOSSH=/usr/bin/autossh
+
+# ===========
+# = Exports =
+# ===========
+
+export AUTOSSH_PIDFILE="/var/run/autossh.$NUMBER.pid"
+
+# ============
+# = Programm =
+# ============
+
+function start_autossh {
+	$AUTOSSH -f -i $KEYFILE -N $FORWARDING $USER@$HOST
+}
+
+case $CMD in
+  start)
+    start_autossh
+    exit 0
+  ;;
+  *)
+		p1="Usage: ./autossh start 0 tunnel floatera.qed.io"
+		p2="-L3307:localhost:3306 keyfile"
+    echo $p1$p2
+    exit 0
+  ;;
+esac

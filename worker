@@ -1,0 +1,106 @@
+#!/bin/bash
+#
+# init script for resque workers
+# sample usage:
+# ./script/shared/worker start update_staging_db qed_api development --no-env
+
+# ==================
+# = Configurations =
+# ==================
+
+# Print commands and their arguments as they are executed.
+# use only for development
+# set -x
+
+# ===========
+# = Exports =
+# ===========
+
+export RAILS_ENV=$4
+export RACK_ENV=$4
+
+# Append underscore environment to queue for active record like queue name
+export QUEUE="$2_$4"
+
+# ========================
+# = Set global variables =
+# ========================
+
+CMD=$1
+APPLICATION=$3
+
+if [ "$5" == "--no-env" ]; then
+  ENVIRONMENT=""
+else
+  ENVIRONMENT="environment"
+fi
+
+# Set application root according to rails environment
+case $RAILS_ENV in
+  production)
+    APPLICATION_ROOT="/var/www/$APPLICATION/current"
+  ;;
+  beta)
+    APPLICATION_ROOT="/var/www/$APPLICATION/current"
+  ;;
+  *)
+    APPLICATION_ROOT=`pwd`
+  ;;
+esac
+
+LOG="$APPLICATION_ROOT/log/resque-workers.log"
+PID_FILE="/tmp/resque-worker.$QUEUE.pid"
+
+# ============
+# = Programm =
+# ============
+
+function start_worker {
+  cd $APPLICATION_ROOT
+  $GEM_HOME/bin/rake $ENVIRONMENT resque:work >> $LOG 2>&1 &
+  PID=$!
+  echo 'Waiting for worker to start...' >> $LOG
+  # We need to wait some undetermined time to load the environment
+  # only after that we can actually be sure the worker started
+  # successfully (or not)
+  sleep 15
+  active=`ps axo pid | grep $PID`
+  STATUS=$?
+  if [ $STATUS -ne 0 ]; then
+    echo "Error starting worker on $QUEUE." >> $LOG
+  else
+    echo $PID > $PID_FILE
+    echo "Started Worker $PID on $QUEUE." >> $LOG
+  fi
+}
+
+function kill_workers {
+  PATTERN="resque.*$QUEUE"
+
+  worker_count=`pgrep -f $PATTERN | wc -l`
+  if [ $worker_count -eq 0 ]; then
+    echo "No workers on $QUEUE." >> $LOG
+  else
+    echo "Sending SIGQUIT to $worker_count workers on $QUEUE..." >> $LOG
+    pkill -f $PATTERN &> /dev/null
+  fi
+  rm $PID_FILE &> /dev/null
+}
+
+
+echo "`date +'%F %T'` Resque worker init script" >> $LOG
+
+case $CMD in
+  start)
+    start_worker
+    exit 0
+  ;;
+  stop)
+    kill_workers
+    exit 0
+  ;;
+  *)
+    echo 'Usage: script/worker {start|stop|terminate} queue-name application rails-env [--no-env]'
+    exit 0
+  ;;
+esac
