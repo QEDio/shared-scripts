@@ -2,7 +2,7 @@
 #
 # init script for resque workers
 # sample usage:
-# ./script/shared/worker start update_staging_db qed_api development --no-env
+# ./script/shared/worker start update_staging_db qed_api development
 
 # ==================
 # = Configurations =
@@ -100,7 +100,7 @@ case $CMD in
     exit 0
   ;;
   *)
-    echo 'Usage: script/worker {start|stop|terminate} queue-name application rails-env [--no-env]'
+    echo 'Usage: script/worker {start|stop|terminate} queue-name application rails-env'
     exit 0
   ;;
 esac
