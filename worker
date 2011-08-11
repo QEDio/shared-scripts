@@ -57,7 +57,7 @@ PID_FILE="/tmp/resque-worker.$QUEUE.pid"
 
 function start_worker {
   cd $APPLICATION_ROOT
-  $GEM_HOME/bin/rake $ENVIRONMENT resque:work >> $LOG 2>&1 &
+  bundle exec rake $ENVIRONMENT resque:work >> $LOG 2>&1 &
   PID=$!
   echo 'Waiting for worker to start...' >> $LOG
   # We need to wait some undetermined time to load the environment
