@@ -1,8 +1,7 @@
 #!/bin/bash
 
 STAGE=$1
-NODE=$2
-FROM=$3
-TO=$4
+FROM=$2
+TO=$3
 
-cat ${FROM} | sed s/%STAGE%/${STAGE}/g | sed s/%NODE%/${NODE}/g > ${TO}
+cat ${FROM} | sed s/%STAGE%/${STAGE}/g > ${TO}
