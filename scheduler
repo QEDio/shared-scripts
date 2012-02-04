@@ -19,6 +19,8 @@
 export RAILS_ENV=$3
 export RACK_ENV=$3
 
+export QUEUE="$2_scheduler"
+
 # ========================
 # = Set global variables =
 # ========================
@@ -46,7 +48,7 @@ case $RAILS_ENV in
 esac
 
 LOG="$APPLICATION_ROOT/log/resque-scheduler.log"
-PID_FILE="/tmp/resque-worker.scheduler.pid"
+PID_FILE="/tmp/resque-worker.$QUEUE.pid"
 
 # ============
 # = Programm =
@@ -72,13 +74,13 @@ function start_worker {
 }
 
 function kill_workers {
-  PATTERN="resque.*scheduler"
+  PATTERN="resque.*$QUEUE"
 
   worker_count=`pgrep -f $PATTERN | wc -l`
   if [ $worker_count -eq 0 ]; then
-    echo "No workers for Resque-Scheduler." >> $LOG
+    echo "No workers on $QUEUE." >> $LOG
   else
-    echo "Sending SIGQUIT to $worker_count Resque-Scheduler..." >> $LOG
+    echo "Sending SIGQUIT to $worker_count on $QUEUE..." >> $LOG
     pkill -f $PATTERN &> /dev/null
   fi
   rm $PID_FILE &> /dev/null
@@ -97,7 +99,7 @@ case $CMD in
     exit 0
   ;;
   *)
-    echo 'Usage: script/worker {start|stop|terminate} application rails-env'
+    echo 'Usage: script/scheduler {start|stop|terminate} application rails-env'
     exit 0
   ;;
 esac
