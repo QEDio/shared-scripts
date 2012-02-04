@@ -16,21 +16,17 @@
 # = Exports =
 # ===========
 
-export RAILS_ENV=$4
-export RACK_ENV=$4
-
-# Append underscore environment to queue for active record like queue name
-export QUEUE="$2_$4"
-#export COUNT=$5
+export RAILS_ENV=$3
+export RACK_ENV=$3
 
 # ========================
 # = Set global variables =
 # ========================
 
 CMD=$1
-APPLICATION=$3
+APPLICATION=$2
 
-if [ "$5" == "--no-env" ]; then
+if [ "$4" == "--no-env" ]; then
   ENVIRONMENT=""
 else
   ENVIRONMENT="environment"
@@ -49,8 +45,8 @@ case $RAILS_ENV in
   ;;
 esac
 
-LOG="$APPLICATION_ROOT/log/resque-workers.log"
-PID_FILE="/tmp/resque-worker.$QUEUE.pid"
+LOG="$APPLICATION_ROOT/log/resque-scheduler.log"
+PID_FILE="/tmp/resque-worker.scheduler.pid"
 
 # ============
 # = Programm =
@@ -58,7 +54,7 @@ PID_FILE="/tmp/resque-worker.$QUEUE.pid"
 
 function start_worker {
   cd $APPLICATION_ROOT
-  bundle exec rake $ENVIRONMENT resque:work >> $LOG 2>&1 &
+  bundle exec rake $ENVIRONMENT resque:scheduler >> $LOG 2>&1 &
   PID=$!
   echo 'Waiting for worker to start...' >> $LOG
   # We need to wait some undetermined time to load the environment
@@ -68,21 +64,21 @@ function start_worker {
   active=`ps axo pid | grep $PID`
   STATUS=$?
   if [ $STATUS -ne 0 ]; then
-    echo "Error starting worker on $QUEUE." >> $LOG
+    echo "Error starting worker on Resque-Scheduler." >> $LOG
   else
     echo $PID > $PID_FILE
-    echo "Started Worker $PID on $QUEUE." >> $LOG
+    echo "Started Worker $PID for Resque-Scheduler." >> $LOG
   fi
 }
 
 function kill_workers {
-  PATTERN="resque.*$QUEUE"
+  PATTERN="resque.*scheduler"
 
   worker_count=`pgrep -f $PATTERN | wc -l`
   if [ $worker_count -eq 0 ]; then
-    echo "No workers on $QUEUE." >> $LOG
+    echo "No workers for Resque-Scheduler." >> $LOG
   else
-    echo "Sending SIGQUIT to $worker_count workers on $QUEUE..." >> $LOG
+    echo "Sending SIGQUIT to $worker_count Resque-Scheduler..." >> $LOG
     pkill -f $PATTERN &> /dev/null
   fi
   rm $PID_FILE &> /dev/null
@@ -101,7 +97,7 @@ case $CMD in
     exit 0
   ;;
   *)
-    echo 'Usage: script/worker {start|stop|terminate} queue-name application rails-env number-workers'
+    echo 'Usage: script/worker {start|stop|terminate} application rails-env'
     exit 0
   ;;
 esac
