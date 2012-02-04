@@ -19,7 +19,7 @@
 export RAILS_ENV=$3
 export RACK_ENV=$3
 
-export QUEUE="$2_scheduler"
+export QUEUE="$2_scheduler_$3"
 
 # ========================
 # = Set global variables =
