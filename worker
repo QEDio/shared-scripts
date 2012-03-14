@@ -2,7 +2,7 @@
 #
 # init script for resque workers
 # sample usage:
-# ./script/shared/worker start update_staging_db qed_api development
+# ./script/shared/worker start update_staging_db qed_api development id [--no-env]
 
 # ==================
 # = Configurations =
@@ -20,8 +20,11 @@ export RAILS_ENV=$4
 export RACK_ENV=$4
 
 # Append underscore environment to queue for active record like queue name
-export QUEUE="$2_$4"
-#export COUNT=$5
+if [ -z $5 ]; then
+    export QUEUE="$2_$4"
+else
+    export QUEUE="$2_$4_$5"
+fi
 
 # ========================
 # = Set global variables =
@@ -30,7 +33,7 @@ export QUEUE="$2_$4"
 CMD=$1
 APPLICATION=$3
 
-if [ "$5" == "--no-env" ]; then
+if [ "$6" == "--no-env" ]; then
   ENVIRONMENT=""
 else
   ENVIRONMENT="environment"
