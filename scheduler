@@ -48,7 +48,7 @@ case $RAILS_ENV in
 esac
 
 LOG="$APPLICATION_ROOT/log/resque-scheduler.log"
-PID_FILE="/tmp/resque-worker.$QUEUE.pid"
+PID_FILE="/tmp/resque-scheduler.$QUEUE.pid"
 
 # ============
 # = Programm =
@@ -74,13 +74,13 @@ function start_worker {
 }
 
 function kill_workers {
-  PATTERN="resque.*$QUEUE"
+  PATTERN="resque-scheduler-*"
 
   worker_count=`pgrep -f $PATTERN | wc -l`
   if [ $worker_count -eq 0 ]; then
-    echo "No workers on $QUEUE." >> $LOG
+    echo "No workers on schedule." >> $LOG
   else
-    echo "Sending SIGQUIT to $worker_count on $QUEUE..." >> $LOG
+    echo "Sending SIGQUIT to $worker_count on schedule..." >> $LOG
     pkill -f $PATTERN &> /dev/null
   fi
   rm $PID_FILE &> /dev/null
