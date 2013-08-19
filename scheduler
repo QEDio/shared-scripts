@@ -48,7 +48,7 @@ case $RAILS_ENV in
 esac
 
 LOG="$APPLICATION_ROOT/log/resque-scheduler.log"
-PID_FILE="/tmp/resque-scheduler.$APPLICATION_scheduler_$RAILS_ENV.pid"
+PID_FILE="/tmp/resque-scheduler."$APPLICATION"_scheduler_"$RAILS_ENV".pid"
 
 # ============
 # = Programm =

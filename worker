@@ -22,18 +22,18 @@ export RACK_ENV=$4
 # Append underscore environment to queue for active record like queue name
 export QUEUE="$2_$4"
 
+CMD=$1
+APPLICATION=$3
+
 if [ -z $5 ]; then
-  PID_FILE="/tmp/resque-worker.$APPLICATION_$QUEUE.pid"
+  PID_FILE="/tmp/resque-worker."$APPLICATION"_"$QUEUE".pid"
 else
-  PID_FILE="/tmp/resque-worker.$APPLICATION_$QUEUE.$5.pid"
+  PID_FILE="/tmp/resque-worker."$APPLICATION"_"$QUEUE"."$5".pid"
 fi
 
 # ========================
 # = Set global variables =
 # ========================
-
-CMD=$1
-APPLICATION=$3
 
 if [ "$6" == "--no-env" ]; then
   ENVIRONMENT=""
