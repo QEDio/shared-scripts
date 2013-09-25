@@ -16,6 +16,9 @@
 # = Exports =
 # ===========
 
+# $6 => sub-queue (if we split the work which would go into one queue into sub queues with the same worker
+# $5 => id for multiple worker working on the same queue
+
 export RAILS_ENV=$4
 export RACK_ENV=$4
 
@@ -27,7 +30,7 @@ else
   # useful if we need to split the same work into sub-queues because we need to have
   # the same kind of element (idenfied by an id) in the same queue for consistency reasons
   # only one worker on such a queue is currently supported
-  export QUEUE="$2_$4_$5"
+  export QUEUE="$2_$4_$6"
 fi
 
 
