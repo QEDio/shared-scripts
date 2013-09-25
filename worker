@@ -19,8 +19,17 @@
 export RAILS_ENV=$4
 export RACK_ENV=$4
 
+if [ -z $6 ]; then
 # Append underscore environment to queue for active record like queue name
-export QUEUE="$2_$4"
+    export QUEUE="$2_$4"
+else
+  # attach worker to queue with additional diversifyer (0,1,2 ...)
+  # useful if we need to split the same work into sub-queues because we need to have
+  # the same kind of element (idenfied by an id) in the same queue for consistency reasons
+  # only one worker on such a queue is currently supported
+  export QUEUE="$2_$4_$5"
+fi
+
 
 CMD=$1
 APPLICATION=$3
