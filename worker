@@ -44,7 +44,7 @@ fi
 # = Set global variables =
 # ========================
 
-if [ "$6" == "--no-env" ]; then
+if [ "$7" == "--no-env" ]; then
   ENVIRONMENT=""
 else
   ENVIRONMENT="environment"
