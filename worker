@@ -58,7 +58,7 @@ if [ -z "$7" ]; then
     export JOBS_PER_FORK=100
 else
     export JOBS_PER_FORK=$7
-end
+fi
 
 # Set application root according to rails environment
 case $RAILS_ENV in
