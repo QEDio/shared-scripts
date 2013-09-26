@@ -22,6 +22,7 @@
 export RAILS_ENV=$4
 export RACK_ENV=$4
 
+
 if [ -z $6 ]; then
 # Append underscore environment to queue for active record like queue name
     export QUEUE="$2_$4"
@@ -47,11 +48,17 @@ fi
 # = Set global variables =
 # ========================
 
-if [ "$7" == "--no-env" ]; then
+if [ "$8" == "--no-env" ]; then
   ENVIRONMENT=""
 else
   ENVIRONMENT="environment"
 fi
+
+if [ -z "$7" ]; then
+    export JOBS_PER_FORK=100
+else
+    export JOBS_PER_FORK=$7
+end
 
 # Set application root according to rails environment
 case $RAILS_ENV in
