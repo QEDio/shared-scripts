@@ -55,7 +55,7 @@ else
 fi
 
 if [ -z "$7" ]; then
-    export JOBS_PER_FORK=100
+    export JOBS_PER_FORK=1000
 else
     export JOBS_PER_FORK=$7
 fi
