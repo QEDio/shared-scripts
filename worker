@@ -101,6 +101,8 @@ function start_worker {
 function kill_workers {
   PATTERN="resque.* $QUEUE"
 
+  # if we need it, make a better division between pkill stuff and pid kill
+  # right now its completly mixed and very error prone
   worker_count=`pgrep -f "$PATTERN" | wc -l`
   if [ $worker_count -eq 0 ]; then
     echo "No workers on $QUEUE." >> $LOG
@@ -108,8 +110,8 @@ function kill_workers {
     echo "Sending SIGQUIT to $worker_count workers on $QUEUE..." >> $LOG
     #pkill -f "$PATTERN" &> /dev/null
     kill $(<"$PID_FILE")  &> /dev/null
+    rm $PID_FILE &> /dev/null
   fi
-  rm $PID_FILE &> /dev/null
 }
 
 
