@@ -1,0 +1,37 @@
+#!/bin/bash
+#
+# script to stop multiple workers at once with the provided pid matching filename-partial
+# sample usage:
+# ./script/shared/multiple_workers [pause|resume] path partial-pid-filname*
+
+CMD=$1
+PID_PATH=$2
+PID_FILENAME_PARTIAL=$3
+PID_FILENAME_SEARCH_PATTERN=$PID_FILENAME_PARTIAL"*"
+LOG=/var/log/multiple_workers.log
+
+function pause_workers {
+  cd $PID_PATH
+  find . -name "$PID_FILENAME_SEARCH_PATTERN" -print0 | xargs -r0 cat | xargs -r kill -SIGUSR2 
+}
+
+function resume_workers {
+  cd $PID_PATH
+  find . -name "$PID_FILENAME_SEARCH_PATTERN" -print0 | xargs -r0 cat | xargs -r kill -SIGCONT
+}
+
+case $CMD in
+  pause)
+    pause_workers
+    exit 0
+  ;;
+  resume)
+    resume_workers
+    exit 0
+  ;;
+  *)
+    echo 'Usage: script/multiple_workers [pause|resume] path partial-pid-filename'
+    exit 0
+  ;;
+esac
+
