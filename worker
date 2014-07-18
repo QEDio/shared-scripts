@@ -29,7 +29,7 @@ ENV=$4
 
 if [ -z $6 ]; then
   # Append underscore environment to queue for active record like queue name
-  export QUEUE="$APPLICATION_$Q_$ENV"
+  export QUEUE=$APPLICATION"_"$Q"_"$ENV
 else
   # attach worker to queue with additional diversifyer (0,1,2 ...)
   # useful if we need to split the same work into sub-queues because we need to have
