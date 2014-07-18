@@ -39,9 +39,9 @@ else
 fi
 
 if [ -z $5 ]; then
-  PID_FILE="/tmp/resque-worker."$APPLICATION"_"$QUEUE".pid"
+  PID_FILE="/tmp/resque-worker."$QUEUE".pid"
 else
-  PID_FILE="/tmp/resque-worker."$APPLICATION"_"$QUEUE"."$5".pid"
+  PID_FILE="/tmp/resque-worker."$QUEUE"."$5".pid"
 fi
 
 # ========================
