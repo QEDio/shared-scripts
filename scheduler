@@ -49,7 +49,6 @@ esac
 
 LOG="$APPLICATION_ROOT/log/resque-scheduler.log"
 PID_FILE="/tmp/resque-scheduler."$APPLICATION"_scheduler_"$RAILS_ENV".pid"
-RESQUE_PREFIX=$APPLICATION":"
 
 # ============
 # = Programm =
@@ -57,7 +56,7 @@ RESQUE_PREFIX=$APPLICATION":"
 
 function start_worker {
   cd $APPLICATION_ROOT
-  RESQUE_SCHEDULER_MASTER_LOCK_PREFIX=$RESQUE_PREFIX bundle exec rake $ENVIRONMENT resque:scheduler >> $LOG 2>&1 &
+  RESQUE_SCHEDULER_MASTER_LOCK_PREFIX=$APPLICATION bundle exec rake $ENVIRONMENT resque:scheduler >> $LOG 2>&1 &
   PID=$!
   echo 'Waiting for worker to start...' >> $LOG
   # We need to wait some undetermined time to load the environment
